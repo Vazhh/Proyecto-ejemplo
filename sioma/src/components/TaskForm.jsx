@@ -27,25 +27,33 @@ export default function TaskForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (params.id) {
-      dispatch(editTask(task))
-      navigate("/");
+      dispatch(editTask(task));
     } else {
-    console.log(task);
-    dispatch(
-      addTask({
-        ...task,
-        id: uuid(),
-      })
-    );
+      dispatch(addTask({ ...task, id: uuid() }));
+    }
     navigate("/");
-  }};
+  };
 
   useEffect(() => {
     if (params.id) {
-      const taskFound = tasks.find((task) => task.id === params.id);
-      setTask(taskFound);
+      const taskFound = tasks.find((t) => t.id === params.id);
+      if (taskFound) {
+        setTask(taskFound);
+      } else {
+        // En caso de que no se encuentre, inicializa en blanco para evitar error
+        setTask({
+          name: "",
+          type: "",
+          description: "",
+          img: "",
+        });
+      }
     }
-  });
+  }, [params.id, tasks]);
+
+  // Validación de seguridad: no renderizar si task no está definido
+  if (!task) return <p>Cargando...</p>;
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -56,32 +64,32 @@ export default function TaskForm() {
         name="name"
         type="text"
         placeholder="name"
+        value={task.name}
         onChange={handleChange}
-        
       />
       <input
         className="border-2 border-solid rounded-md p-2 mb-4"
         name="type"
         type="text"
         placeholder="type"
+        value={task.type}
         onChange={handleChange}
-        
       />
       <input
         className="border-2 border-solid rounded-md p-2 mb-4"
         name="description"
         type="text"
         placeholder="description"
+        value={task.description}
         onChange={handleChange}
-        
       />
       <input
         className="border-2 border-solid rounded-md p-2 mb-4"
         name="img"
         type="text"
         placeholder="img"
+        value={task.img}
         onChange={handleChange}
-        
       />
       <button className="border-2 border-solid rounded-md p-2 mb-4 bg-blue-300">
         Save
